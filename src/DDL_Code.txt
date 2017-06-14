@@ -1,0 +1,67 @@
+CREATE TABLE Playlist (
+	id INTEGER PRIMARY KEY,
+	title VARCHAR(50) NOT NULL,
+	description VARCHAR(100),
+	created_at DATE NOT NULL,
+	creatorid INTEGER NOT NULL
+);
+
+CREATE TABLE Track (
+	id INTEGER PRIMARY KEY,
+	title VARCHAR(50) NOT NULL,
+	created_at DATE NOT NULL,
+	favorite_count INTEGER NOT NULL,
+	play_count INTEGER NOT NULL,
+	genreid INTEGER NOT NULL,
+	creatorid INTEGER NOT NULL
+);
+
+CREATE TABLE User (
+	id INTEGER PRIMARY KEY,
+	username VARCHAR(50) NOT NULL,
+	description VARCHAR(100),
+	city VARCHAR(50) NOT NULL,
+	country VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE Groups (
+	id INTEGER PRIMARY KEY,
+	name VARCHAR(50) NOT NULL,
+	description VARCHAR(100),
+	created_at DATE NOT NULL,
+	creatorid INTEGER NOT NULL
+);
+
+CREATE TABLE PlaylistTrack (
+	trackid INTEGER NOT NULL,
+	playlistid INTEGER NOT NULL,
+	PRIMARY KEY (trackid, playlistid)
+);
+
+CREATE TABLE Genre (
+	id INTEGER AUTO_INCREMENT PRIMARY KEY,
+	name VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE TrackComment (
+	trackid INTEGER NOT NULL,
+	commentid INTEGER NOT NULL,
+	text VARCHAR(100) NOT NULL,
+	PRIMARY KEY (trackid, commentid)
+);
+
+CREATE TABLE MemberOf (
+	userid INTEGER NOT NULL,
+	groupid INTEGER NOT NULL,
+	PRIMARY KEY (userid, groupid)
+);
+
+CREATE TABLE Duration (
+	trackid INTEGER PRIMARY KEY,
+	duration INTEGER NOT NULL
+);
+
+CREATE TABLE PlaylistDuration (
+	playlistidINTEGER PRIMARY KEY,
+	duration INTEGER NOT NULL
+);

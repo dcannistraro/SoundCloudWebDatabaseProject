@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script src="http://connect.soundcloud.com/sdk.js"></script>
+<script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+SC.initialize({
+  client_id: '02gUJC0hH2ct1EGOcYXQIzRFU91c72Ea'
+});
+
+function load(){
+	var searchTerm = $("#search").val();
+	var limit = $("#limit").val();
+	console.log(searchTerm+" "+limit);
+	
+	SC.get('/tracks', { limit: limit, offset:0, q: searchTerm }, function(tracks){
+		$(tracks).each(function(index, track){
+			var created_at = track.created_at.substr(0, 10).replace("/", "-").replace("/", "-");
+			var userId = track.user.id;
+			$.post('track_insert.php', { id: track.id, title: track.title, created_at: created_at, favorite_count: track.likes_count, play_count: track.playback_count, creatorid: track.user_id, genre: track.genre, creator: track.user.username, duration: track.duration }, function(result) { 
+			   $("#result").html($("#result").html()+result);
+			});
+			SC.get('/tracks/'+track.id+'/comments', {limit: 50}, function(comments){
+				$(comments).each(function(index, comm){
+					$.post('comment_insert.php', { id: comm.id, track_id: comm.track_id, text: comm.body}, function(result) { 
+					   console.log(result);
+					});
+				});
+			});
+			SC.get('/users/'+userId, {}, function(user){
+				$.post('user_insert.php', { id: user.id, username: user.username, desc: user.description, city: user.city, country: user.country}, function(result) { 
+				   $("#result").html($("#result").html()+result);
+				});
+			});
+		});
+	});
+}
+</script>
+</head>
+<body>
+<div class="container">
+<h2>Insert Tracks Into Database</h2>
+<div class="form-group">
+  <label for="search">Search Term:</label>
+  <input type="text" class="form-control" id="search"><br>
+  <label for="limit">Number of tracks:</label>
+  <select id="limit">
+  <option>20
+  <option>50
+  <option>100
+  <option>200
+  </select>
+</div>
+<button type="button" class="btn btn-primary"onclick="load()">Load Tracks</button>
+<a href="menu.html"><button type="button" class="btn btn-primary"style="position:fixed;bottom:10px;left:10px;">Back to Menu</button></a>
+<div id="result"></div>
+</div>
+</body>
+</html>
